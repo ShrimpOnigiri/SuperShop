@@ -15,8 +15,10 @@ namespace SuperShop
             {
                 cfg.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddTransient<SeedDb>();
 
             var app = builder.Build();
+            RunSeeding(app);
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -38,6 +40,16 @@ namespace SuperShop
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static void RunSeeding(IHost host)
+        {
+            var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetService<SeedDb>();
+                seeder.SeedAsync().Wait();
+            }
         }
     }
 }
