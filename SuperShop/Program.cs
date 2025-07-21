@@ -16,7 +16,7 @@ namespace SuperShop
                 cfg.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddTransient<SeedDb>();
-            builder.Services.AddScoped<IRepository, Repository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             var app = builder.Build();
             RunSeeding(app);
