@@ -33,6 +33,8 @@ namespace SuperShop
             builder.Services.AddTransient<SeedDb>();
             builder.Services.AddScoped<IUserHelper, UserHelper>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IImageHelper, ImageHelper>();
+            builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
 
             var app = builder.Build();
             RunSeeding(app);

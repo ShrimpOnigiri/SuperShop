@@ -35,7 +35,7 @@ namespace SuperShop.Data.Entities
 
         public User? User { get; set; }
 
-        public string ImageFullPath
+        public string? ImageFullPath
         {
             get
             {
