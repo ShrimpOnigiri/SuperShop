@@ -86,7 +86,7 @@ namespace SuperShop.Controllers
                 Console.WriteLine($"PATH DEVOLVIDO: {path}");
 
                 //TODO: Change for the user that's currently logged in
-                product.User = await _userHelper.GetUserByEmailAsync("rafaasfs@gmail.com");
+                product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -132,8 +132,7 @@ namespace SuperShop.Controllers
 
                     var product = _converterHelper.ToProduct(model, path, false);
 
-                    //TODO: Change for the user that's currently logged in
-                    product.User = await _userHelper.GetUserByEmailAsync("rafaasfs@gmail.com");
+                    product.User = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -153,6 +152,7 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
