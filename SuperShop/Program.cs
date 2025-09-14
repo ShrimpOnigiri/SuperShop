@@ -36,6 +36,12 @@ namespace SuperShop
             builder.Services.AddScoped<IImageHelper, ImageHelper>();
             builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
+
             var app = builder.Build();
             RunSeeding(app);
 
@@ -46,6 +52,8 @@ namespace SuperShop
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
