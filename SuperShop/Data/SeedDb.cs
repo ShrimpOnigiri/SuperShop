@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SuperShop.Data.Entities;
 using SuperShop.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace SuperShop.Data
 {
@@ -21,7 +22,7 @@ namespace SuperShop.Data
 
         public async Task SeedAsync()
         {
-            await _context.Database.EnsureCreatedAsync();
+            await _context.Database.MigrateAsync();
 
             await _userHelper.CheckRoleAsync("Admin");
             await _userHelper.CheckRoleAsync("Customer");
