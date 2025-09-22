@@ -13,6 +13,6 @@ namespace SuperShop.Models
         [Range(0.0001, double.MaxValue, ErrorMessage = "The quantity must be a positive number.")]
         public double Quantity { get; set; }
 
-        public IEnumerable<SelectListItem> Products { get; set; }
+        public IEnumerable<SelectListItem>? Products { get; set; }
     }
 }

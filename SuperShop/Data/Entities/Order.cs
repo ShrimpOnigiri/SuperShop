@@ -19,7 +19,7 @@ namespace SuperShop.Data.Entities
         [Required]
         public User User { get; set; }
 
-        public IEnumerable<OrderDetail> Items { get; set; }
+        public IEnumerable<OrderDetail>? Items { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity => Items == null ? 0 : Items.Sum(i => i.Quantity);
