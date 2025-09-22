@@ -14,14 +14,28 @@ namespace SuperShop.Data
             _userHelper = userHelper;
         }
 
-         public async Task<IQueryable<Order>> GetOrderAsync(string userName)
-         {
+        public async Task<IQueryable<OrderDetailTemp>> GetDetailTempAsync(string userName)
+        {
             var user = await _userHelper.GetUserByEmailAsync(userName);
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }
-            if(await _userHelper.IsUserInRoleAsync(user, "Admin"))
+
+            return _context.OrderDetailsTemp
+                .Include(p => p.Product)
+                .Where(o => o.User == user)
+                .OrderBy(o => o.Product.Name);
+        }
+
+        public async Task<IQueryable<Order>> GetOrderAsync(string userName)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(userName);
+            if (user == null)
+            {
+                return null;
+            }
+            if (await _userHelper.IsUserInRoleAsync(user, "Admin"))
             {
                 return _context.Orders
                     .Include(o => o.Items)
@@ -36,5 +50,5 @@ namespace SuperShop.Data
                 .OrderByDescending(o => o.OrderDate);
         }
 
-    }   
+    }
 }
