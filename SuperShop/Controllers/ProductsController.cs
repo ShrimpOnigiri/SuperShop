@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SuperShop.Data;
 using SuperShop.Data.Entities;
@@ -59,7 +60,7 @@ namespace SuperShop.Controllers
         }
 
         // GET: Products/Create
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -79,7 +80,7 @@ namespace SuperShop.Controllers
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
                     path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
-                    
+
                 }
 
                 var product = _converterHelper.ToProduct(model, path, true);
@@ -137,7 +138,7 @@ namespace SuperShop.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _productRepository.ExistAsync(model.Id))
+                    if (!await _productRepository.ExistAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -172,11 +173,26 @@ namespace SuperShop.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
-            await _productRepository.DeleteAsync(product);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                //throw new Exception("Exceção de teste");
+                await _productRepository.DeleteAsync(product);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"{product.Name} provavelmente está a ser usado.";
+                    ViewBag.ErrorMessage = $"{product.Name} não pode ser apagado visto haverem encomendas que o usem.</br></br>" +
+                    $"Experimente primeiro apagar todas as encomendas que o usem, e depois tente apagá-lo novamente.</br></br>";
+                }
+                return View("Error");
+            }
         }
 
         public IActionResult ProductNotFound()

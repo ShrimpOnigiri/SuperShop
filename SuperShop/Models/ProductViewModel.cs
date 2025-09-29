@@ -6,6 +6,6 @@ namespace SuperShop.Models
     public class ProductViewModel : Product
     {
         [Display(Name = "Image")]
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
     }
 }
